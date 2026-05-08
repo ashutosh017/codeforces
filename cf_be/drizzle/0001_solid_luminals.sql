@@ -1,0 +1,1 @@
+ALTER TABLE "submissions" ADD COLUMN "judge_token" varchar(255);
