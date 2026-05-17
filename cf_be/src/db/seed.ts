@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { db } from "../drizzle";
-import { problemsTable } from "./schema";
+import { problemsTable, sampleTestCasesTable } from "./schema";
 import { eq } from "drizzle-orm";
 
 const PROBLEMS_DIR = path.join(process.cwd(), "problems");
@@ -15,17 +15,16 @@ interface ProblemData {
   tags?: string[];
 }
 
-function getAllProblemFiles(dir: string, fileList: string[] = []): string[] {
-  const files = fs.readdirSync(dir);
-  files.forEach(file => {
-    const filePath = path.join(dir, file);
-    if (fs.statSync(filePath).isDirectory()) {
-      getAllProblemFiles(filePath, fileList);
-    } else if (file === "problem.md") {
-      fileList.push(filePath);
+function getAllProblemDirs(dir: string): string[] {
+  const dirs: string[] = [];
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      const problemMd = path.join(dir, entry.name, "problem.md");
+      if (fs.existsSync(problemMd)) dirs.push(path.join(dir, entry.name));
     }
-  });
-  return fileList;
+  }
+  return dirs;
 }
 
 async function seed() {
@@ -36,10 +35,11 @@ async function seed() {
     return;
   }
 
-  const problemFiles = getAllProblemFiles(PROBLEMS_DIR);
+  const problemDirs = getAllProblemDirs(PROBLEMS_DIR);
   
-  for (const filePath of problemFiles) {
-    const fileContent = fs.readFileSync(filePath, "utf-8");
+  for (const dir of problemDirs) {
+    const mdPath = path.join(dir, "problem.md");
+    const fileContent = fs.readFileSync(mdPath, "utf-8");
     const { data, content } = matter(fileContent);
     const problemData = data as ProblemData;
     
@@ -53,7 +53,6 @@ async function seed() {
     const mainDescription = (contentParts[0] || "No description provided.").trim();
 
     try {
-      // Use upsert logic by title
       await db.insert(problemsTable).values({
         title: problemData.title,
         difficulty: problemData.difficulty,
@@ -75,6 +74,30 @@ async function seed() {
           outputDescription: outputDescription,
         }
       });
+
+      const [problem] = await db.select().from(problemsTable).where(eq(problemsTable.title, problemData.title)).limit(1);
+      if (!problem) throw new Error("Problem not found after upsert");
+
+      // Store sample test cases as the full content of input/1.txt and output/1.txt
+      await db.delete(sampleTestCasesTable).where(eq(sampleTestCasesTable.problemId, problem.id));
+
+      const inputPath = path.join(dir, "input", "1.txt");
+      const outputPath = path.join(dir, "output", "1.txt");
+      const explMatch = content.match(/## Sample Explanations\n([\s\S]*?)(?=\n##|$)/);
+      const explanations = explMatch ? explMatch[1]!.concat("\n").trim() : "";
+
+      if (fs.existsSync(inputPath) && fs.existsSync(outputPath)) {
+        const inputContent = fs.readFileSync(inputPath, "utf-8").trim();
+        const outputContent = fs.readFileSync(outputPath, "utf-8").trim();
+        await db.insert(sampleTestCasesTable).values({
+          problemId: problem.id,
+          input: inputContent,
+          output: outputContent,
+          explanation: explanations || null,
+          order: 1,
+        });
+      }
+
       console.log(`Synced problem: ${problemData.title}`);
     } catch (error) {
       console.error(`Error syncing problem ${problemData.title}:`, error);

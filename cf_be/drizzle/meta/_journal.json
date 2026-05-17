@@ -15,6 +15,20 @@
       "when": 1777052497564,
       "tag": "0001_solid_luminals",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778838922974,
+      "tag": "0002_natural_ulik",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1778906103889,
+      "tag": "0003_exotic_vision",
+      "breakpoints": true
     }
   ]
 }

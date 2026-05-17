@@ -13,30 +13,28 @@ Given an integer `x`, return `true` if `x` is a palindrome, and `false` otherwis
 An integer is a palindrome when it reads the same backward as forward. For example, `121` is a palindrome while `123` is not.
 
 ## Input Description
-- An integer `x` where `-2^31 <= x <= 2^31 - 1`.
+The first line contains an integer `T` (`1 <= T <= 10^4`), the number of test cases.
+Each test case consists of a single integer `x` where `-2^31 <= x <= 2^31 - 1`.
 
 ## Output Description
-- Return `true` if `x` is a palindrome integer, `false` otherwise.
+For each test case, output `true` if `x` is a palindrome integer, `false` otherwise.
 
-## Examples
-
-**Example 1:**
+## Sample Input
 ```
-Input: x = 121
-Output: true
-Explanation: 121 reads as 121 from left to right and from right to left.
-```
-
-**Example 2:**
-```
-Input: x = -121
-Output: false
-Explanation: From left to right, it reads -121. From right to left, it becomes 121-. Therefore it is not a palindrome.
+3
+121
+-121
+10
 ```
 
-**Example 3:**
+## Sample Output
 ```
-Input: x = 10
-Output: false
-Explanation: Reads 01 from right to left. Therefore it is not a palindrome.
+true
+false
+false
 ```
+
+## Sample Explanations
+1. 121 reads as 121 from left to right and from right to left, so it is a palindrome. 
+2. From left to right, -121 reads as -121. From right to left, it becomes 121-, so it is not a palindrome.
+3. 10 reads as 01 from right to left, so it is not a palindrome.

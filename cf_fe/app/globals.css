@@ -384,6 +384,22 @@ body {
   color: #5892c9;
 }
 
+.error-banner {
+  background: #fef2f2;
+  color: #991b1b;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  border: 1px solid #fecaca;
+}
+
+.dark .error-banner {
+  background: #3b1a1a;
+  color: #fca5a5;
+  border-color: #5c2020;
+}
+
 /* Auth pages */
 .auth-container {
   max-width: 400px;

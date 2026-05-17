@@ -33,6 +33,7 @@ export const problemsTable = pgTable("problems", {
   timeLimit: integer("time_limit").default(1000).notNull(), // in ms
   memoryLimit: integer("memory_limit").default(256).notNull(), // in mb
   tags: jsonb().default([]).notNull(), // array of strings: ["dp", "greedy", "math"]
+  solvedCount: integer().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -57,6 +58,15 @@ export const submissionsTable = pgTable("submissions", {
   executionTime: integer("execution_time"), // in ms
   memoryUsed: integer("memory_used"), // in kb
   createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const sampleTestCasesTable = pgTable("sample_test_cases", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  problemId: integer("problem_id").references(() => problemsTable.id).notNull(),
+  input: text().notNull(),
+  output: text().notNull(),
+  explanation: text(),
+  order: integer().notNull().default(0),
 });
 
 export const contestParticipantsTable = pgTable("contest_participants", {

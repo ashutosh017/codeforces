@@ -1,7 +1,16 @@
 import Link from "next/link";
-import { problems } from "../lib/data";
+import { fetchProblems } from "../lib/api";
+import type { Problem } from "../lib/data";
 
-export default function ProblemsPage() {
+export default async function ProblemsPage() {
+  let problems: Problem[] = [];
+  let error: string | null = null;
+  try {
+    problems = await fetchProblems();
+  } catch (e) {
+    error = e instanceof Error ? e.message : "Failed to load problems";
+  }
+
   return (
     <div>
       <div className="page-header">
@@ -11,13 +20,19 @@ export default function ProblemsPage() {
         </span>
       </div>
 
+      {error && (
+        <div className="error-banner">
+          {error}
+        </div>
+      )}
+
       <div className="card">
         <table className="cf-table">
           <thead>
             <tr>
               <th style={{ width: "8%" }}>#</th>
               <th style={{ width: "32%" }}>Problem Name</th>
-              <th style={{ width: "10%" }}>Rating</th>
+              <th style={{ width: "10%" }}>Difficulty</th>
               <th style={{ width: "30%" }}>Tags</th>
               <th style={{ width: "20%" }}>Solved</th>
             </tr>
@@ -31,22 +46,22 @@ export default function ProblemsPage() {
                     href={`/problems/${problem.id}`}
                     className="problem-title cf-link"
                   >
-                    {problem.index}. {problem.title}
+                    {problem.title}
                   </Link>
                 </td>
                 <td>
-                  <span className="rating-badge">{problem.rating}</span>
+                  <span className="rating-badge">{problem.difficulty}</span>
                 </td>
                 <td>
                   <div>
-                    {problem.tags.map((tag) => (
+                    {problem.tags?.map((tag) => (
                       <span key={tag} className="tag-badge">
                         {tag}
                       </span>
                     ))}
                   </div>
                 </td>
-                <td>{problem.solvedCount.toLocaleString()}</td>
+                <td>{problem.solvedCount?.toLocaleString()}</td>
               </tr>
             ))}
           </tbody>

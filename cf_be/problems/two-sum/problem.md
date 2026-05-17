@@ -13,31 +13,33 @@ Given an array of integers `nums` and an integer `target`, return indices of the
 You may assume that each input would have exactly one solution, and you may not use the same element twice. You can return the answer in any order.
 
 ## Input Description
-- An integer array `nums` where `2 <= nums.length <= 10^4`.
-- Each element `nums[i]` is an integer where `-10^9 <= nums[i] <= 10^9`.
-- A target integer `target` where `-10^9 <= target <= 10^9`.
-- **Constraint**: Only one valid answer exists.
+The first line contains an integer `T` (`1 <= T <= 10^4`), the number of test cases.
+- Each test case consists of a line containing a target integer followed by an array of integers.
+- Second line will contain two values. `target` (`0 <= target <= 10^9`) and `n` (`2 <= n <= 10^5`) - the size of the array.
+- Third line will contain `n` integers where each integer `x` (`0 <= x <= 10^9`).
 
 ## Output Description
-- Return an array of two integers representing the 0-indexed positions of the numbers that sum to the target.
+For each test case, output a line containing two integers representing the 0-indexed positions of the numbers that sum to the target. If none index exists then output -1.
 
-## Examples
-
-**Example 1:**
+## Sample Input
 ```
-Input: nums = [2,7,11,15], target = 9
-Output: [0,1]
-Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
-```
-
-**Example 2:**
-```
-Input: nums = [3,2,4], target = 6
-Output: [1,2]
+3
+9 4
+2 7 11 15
+6 3
+3 2 4
+6 2
+3 3
 ```
 
-**Example 3:**
+## Sample Output
 ```
-Input: nums = [3,3], target = 6
-Output: [0,1]
+[0,1]
+[1,2]
+[0,1]
 ```
+
+## Sample Explanations
+1. Because nums[0] + nums[1] == 9, we return [0, 1].
+2. Because nums[1] + nums[2] == 6, we return [1, 2].
+3. Because nums[0] + nums[1] == 6, we return [0, 1].
